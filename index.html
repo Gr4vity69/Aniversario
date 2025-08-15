@@ -525,10 +525,13 @@
         
         clearContent();
         updateAttemptsCounter();
-        
+
+        // Eliminar cualquier media previa
+        document.querySelectorAll('.question-media').forEach(el => el.remove());
+
         const q = questions[idx];
         const c = document.getElementById('content');
-        
+
         // Cabecera de pregunta
         const header = document.createElement('div');
         header.style.marginBottom = '20px';
@@ -537,12 +540,12 @@
             ${currentGameAttempts > 0 ? `<p style="color: #ff6b6b;">Intentos restantes: ${maxAttempts - currentGameAttempts}</p>` : ''}
         `;
         c.appendChild(header);
-        
-        // Media
+
+        // Media SOLO si existe en la pregunta actual
         if (q.media) {
             const ext = q.media.split('.').pop().toLowerCase();
             let mediaElement;
-            
+
             if (['mp4','webm','ogg'].includes(ext)) {
                 mediaElement = document.createElement('video');
                 mediaElement.src = q.media;
@@ -563,7 +566,7 @@
                 mediaElement.src = q.media;
                 mediaElement.className = 'question-media sprite-large';
             }
-            
+
             if (mediaElement) {
                 c.appendChild(mediaElement);
             }
