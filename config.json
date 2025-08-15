@@ -21,7 +21,7 @@
         "ninguna de las anteriores"
       ],
       "correct": "5",
-  "media": "./games/9f96e584-b789-4428-abc6-d0ca73499f1b/1754624484286-838644578.mp3"
+  "media": null
     },
     {
       "text": "¿De que forma te ayudaba a calmarte?",
@@ -32,7 +32,7 @@
         "cantaba fly me to the moon"
       ],
       "correct": "0",
-  "media": "./games/9f96e584-b789-4428-abc6-d0ca73499f1b/1754624485444-635955390.mp4"
+  "media": null
     },
     {
       "text": "NOTHING BEATS A",
@@ -53,7 +53,29 @@
         "fideos al pesto"
       ],
       "correct": "1",
-  "media": "./games/9f96e584-b789-4428-abc6-d0ca73499f1b/1754624486597-132737933.mp4"
+  "media": null
+    },
+    {
+      "text": "¿Cual es mi bebida favorita?",
+      "options": [
+        "Fernet con coca",
+        "Cerveza rubia",
+        "Gancia con pomelo",
+        "Vino tinto"
+      ],
+      "correct": "0",
+      "media": null
+    },
+    {
+      "text": "¿Cual es mi animal favorito?",
+      "options": [
+        "Perro",
+        "Gato",
+        "Pájaro",
+        "Conejo"
+      ],
+      "correct": "0",
+      "media": null
     },
     {
       "text": "¿Con que cancion tengo editado un video juntos?",
@@ -109,7 +131,7 @@
         "No"
       ],
       "correct": "1",
-      "media": null
+      "media": "./games/9f96e584-b789-4428-abc6-d0ca73499f1b/1754624486597-132737933.mp4"
     }
   ],
   "intermediates": [],
