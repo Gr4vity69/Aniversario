@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Búsqueda del Tesoro</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            transition: background 0.5s;
+        }
+        #main {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            color: var(--text-color, #fff);
+        }
+        .wheel {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            margin: 30px auto;
+            position: relative;
+            background: #222;
+            box-shadow: 0 0 20px #0008;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .wheel-option {
+            position: absolute;
+            width: 120px;
+            height: 40px;
+            left: 50%;
+            top: 50%;
+            transform-origin: left center;
+            background: var(--btn-color, #007bff);
+            color: #fff;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1em;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s;
+        }
+        .wheel-option.selected {
+            background: #28a745;
+        }
+        .question-media, .intermediate-media {
+            display: block;
+            margin: 20px auto;
+            max-width: 90%;
+            max-height: 200px;
+        }
+        .intermediate {
+            margin: 30px 0;
+            padding: 20px;
+            background: #333a;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+<div id="main">
+    <h1 id="title">Búsqueda del Tesoro</h1>
+    <div id="content"></div>
+</div>
+<script>
+let config;
+let currentStep = 0;
+let steps = [];
+let audios = {};
+
+function setBackground() {
+    if (config.bgType === 'color') {
+        document.body.style.background = config.bgColor;
+    } else if (config.bgType === 'image' && config.bgFile) {
+        document.body.style.background = `url('${config.bgFile}') center/cover no-repeat`;
+    } else if (config.bgType === 'video' && config.bgFile) {
+        let v = document.createElement('video');
+        v.src = config.bgFile;
+        v.autoplay = true;
+        v.loop = true;
+        v.muted = true;
+        v.style.position = 'fixed';
+        v.style.top = 0;
+        v.style.left = 0;
+        v.style.width = '100vw';
+        v.style.height = '100vh';
+        v.style.objectFit = 'cover';
+        v.style.zIndex = '-1';
+        document.body.appendChild(v);
+    }
+    document.body.style.setProperty('--text-color', config.textColor || '#fff');
+    document.body.style.setProperty('--btn-color', config.btnColor || '#007bff');
+}
+
+function playAudio(key) {
+    if (audios[key]) {
+        audios[key].currentTime = 0;
+        audios[key].play();
+    }
+}
+
+function showStep(idx) {
+    const c = document.getElementById('content');
+    c.innerHTML = '';
+    if (idx >= steps.length) {
+        c.innerHTML = '<h2>¡Felicidades! Has terminado la búsqueda 🎉</h2>';
+        if (audios.music) audios.music.pause();
+        return;
+    }
+    const step = steps[idx];
+    if (step.type === 'intermediate') {
+        let div = document.createElement('div');
+        div.className = 'intermediate';
+        if (step.text) {
+            let p = document.createElement('p');
+            p.textContent = step.text;
+            div.appendChild(p);
+        }
+        if (step.media) {
+            let ext = step.media.split('.').pop();
+            if (['mp4','webm','ogg'].includes(ext)) {
+                let v = document.createElement('video');
+                v.src = step.media;
+                v.controls = true;
+                v.className = 'intermediate-media';
+                div.appendChild(v);
+            } else if (['mp3','wav','ogg'].includes(ext)) {
+                let a = document.createElement('audio');
+                a.src = step.media;
+                a.controls = true;
+                a.className = 'intermediate-media';
+                div.appendChild(a);
+            }
+        }
+        let btn = document.createElement('button');
+        btn.textContent = 'Continuar';
+        btn.onclick = () => showStep(idx+1);
+        div.appendChild(btn);
+        c.appendChild(div);
+    } else if (step.type === 'question') {
+        let q = step;
+        let h2 = document.createElement('h2');
+        h2.textContent = q.text;
+        c.appendChild(h2);
+        if (q.media) {
+            let ext = q.media.split('.').pop();
+            if (['mp4','webm','ogg'].includes(ext)) {
+                let v = document.createElement('video');
+                v.src = q.media;
+                v.controls = true;
+                v.className = 'question-media';
+                c.appendChild(v);
+            } else if (['mp3','wav','ogg'].includes(ext)) {
+                let a = document.createElement('audio');
+                a.src = q.media;
+                a.controls = true;
+                a.className = 'question-media';
+                c.appendChild(a);
+            }
+        }
+        // Rueda de selección
+        let wheel = document.createElement('div');
+        wheel.className = 'wheel';
+        let angleStep = 360 / q.options.length;
+        q.options.forEach((opt, i) => {
+            let optDiv = document.createElement('div');
+            optDiv.className = 'wheel-option';
+            optDiv.textContent = opt;
+            let angle = i * angleStep - 90;
+            optDiv.style.transform = `rotate(${angle}deg) translate(120px) rotate(${-angle}deg)`;
+            optDiv.onclick = () => {
+                playAudio('select');
+                if (parseInt(q.correct) === i) {
+                    playAudio('correct');
+                    optDiv.classList.add('selected');
+                    setTimeout(() => showStep(idx+1), 1200);
+                } else {
+                    playAudio('wrong');
+                    optDiv.style.background = '#c0392b';
+                }
+            };
+            wheel.appendChild(optDiv);
+        });
+        c.appendChild(wheel);
+    }
+}
+
+async function loadConfig() {
+    const url = window.location.pathname;
+    const parts = url.split('/');
+    const gameId = parts[2];
+    const res = await fetch(`/api/game/${gameId}/config`);
+    config = await res.json();
+    setBackground();
+    // Cargar audios
+    if (config.music) {
+        audios.music = new Audio(config.music);
+        audios.music.loop = true;
+        audios.music.volume = 0.5;
+        audios.music.play();
+    }
+    if (config.soundSelect) audios.select = new Audio(config.soundSelect);
+    if (config.soundCorrect) audios.correct = new Audio(config.soundCorrect);
+    if (config.soundWrong) audios.wrong = new Audio(config.soundWrong);
+    // Construir pasos (intermedios y preguntas)
+    steps = [];
+    let qIdx = 0, iIdx = 0;
+    let total = config.questions.length + config.intermediates.length;
+    // Intercalar mensajes intermedios y preguntas (puedes mejorar el orden si lo deseas)
+    for (let i = 0; i < total; i++) {
+        if (config.intermediates[iIdx] && config.intermediates[iIdx].insertAt === i) {
+            let inter = config.intermediates[iIdx];
+            steps.push({
+                type: 'intermediate',
+                text: inter.text,
+                media: config.intermediateMedias[iIdx] || null
+            });
+            iIdx++;
+        }
+        if (config.questions[qIdx]) {
+            let q = config.questions[qIdx];
+            steps.push({
+                type: 'question',
+                text: q.text,
+                options: q.options,
+                correct: q.correct,
+                media: config.mediaQuestions[qIdx] || null
+            });
+            qIdx++;
+        }
+    }
+    // Si quedan intermedios al final
+    while (iIdx < config.intermediates.length) {
+        let inter = config.intermediates[iIdx];
+        steps.push({
+            type: 'intermediate',
+            text: inter.text,
+            media: config.intermediateMedias[iIdx] || null
+        });
+        iIdx++;
+    }
+    showStep(0);
+}
+
+window.onload = loadConfig;
+</script>
+</body>
+</html>

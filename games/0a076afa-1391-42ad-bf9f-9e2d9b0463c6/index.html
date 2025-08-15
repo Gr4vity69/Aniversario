@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Búsqueda del Tesoro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            touch-action: manipulation;
+        }
+        
+        body {
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+            background: #111;
+            color: #fff;
+            overscroll-behavior: contain;
+            user-select: none;
+            -webkit-user-select: none;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        #main {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            min-height: 100vh;
+        }
+        
+        .screen {
+            text-align: center;
+            padding: 25px;
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h1, h2, h3 {
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .btn {
+            padding: 14px 30px;
+            background: linear-gradient(to right, #4361ee, #3f37c9);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin: 25px auto;
+            display: block;
+            width: 85%;
+            max-width: 280px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:active {
+            transform: scale(0.98);
+        }
+        
+        .btn:after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 20%;
+            height: 200%;
+            background: rgba(255,255,255,0.3);
+            transform: rotate(30deg);
+            transition: all 0.6s;
+        }
+        
+        .btn:hover:after {
+            left: 140%;
+        }
+        
+        .wheel-container {
+            position: relative;
+            width: 92vw;
+            height: 92vw;
+            max-width: 360px;
+            max-height: 360px;
+            margin: 30px auto;
+            touch-action: none;
+        }
+        
+        .wheel-svg {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.3s ease-out;
+        }
+        
+        .option-label {
+            position: absolute;
+            width: 110px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #fff;
+            font-size: 0.95rem;
+            pointer-events: none;
+            font-weight: bold;
+            text-shadow: 0 0 8px #000;
+            transition: all 0.15s;
+            z-index: 5;
+            padding: 6px 8px;
+            border-radius: 12px;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(4px);
+        }
+        
+        .option-label.active {
+            background: #1abc9c;
+            color: #fff;
+            box-shadow: 0 0 20px #1abc9c88;
+            transform: translate(-50%, -50%) scale(1.15);
+        }
+        
+        .arrow {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 36px;
+            height: 36px;
+            transform: translate(-50%, -50%) rotate(0deg);
+            z-index: 2;
+            pointer-events: none;
+            filter: drop-shadow(0 0 3px rgba(0,0,0,0.7));
+        }
+        
+        .center-circle {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 70px;
+            height: 70px;
+            background: #222;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            box-shadow: 0 0 20px #000a, inset 0 0 10px rgba(0,0,0,0.5);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(255,255,255,0.2);
+            touch-action: none;
+        }
+        
+        .center-circle-text {
+            color: #aaa;
+            font-size: 0.8rem;
+            text-align: center;
+            pointer-events: none;
+        }
+        
+        .question-media {
+            display: block;
+            margin: 20px auto;
+            max-width: 92%;
+            max-height: 220px;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+        }
+        
+        .hidden { display: none; }
+        
+        .shake {
+            animation: shake 0.7s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(4px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
+        }
+        
+        #mute-btn {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            background: rgba(0,0,0,0.6);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            z-index: 1000;
+            cursor: pointer;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .attempts-counter {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: rgba(0,0,0,0.6);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            backdrop-filter: blur(4px);
+            z-index: 10;
+        }
+        
+        .intermediate-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.92);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            animation: fadeIn 0.4s;
+        }
+        
+        .intermediate-content {
+            background: rgba(40,40,50,0.95);
+            border-radius: 20px;
+            padding: 25px;
+            max-width: 92%;
+            width: 500px;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.6);
+            border: 1px solid rgba(100,100,255,0.2);
+            position: relative;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.12);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.2s;
+        }
+        
+        .close-btn:active {
+            transform: scale(0.9);
+        }
+        
+        .particle {
+            position: fixed;
+            z-index: 10000;
+            pointer-events: none;
+            animation: particleFloat 1.2s ease-out forwards;
+        }
+        
+        @keyframes particleFloat {
+            to {
+                opacity: 0;
+                transform: translateY(-100px) rotate(360deg);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .wheel-container {
+                width: 88vw;
+                height: 88vw;
+            }
+            
+            .option-label {
+                width: 95px;
+                font-size: 0.85rem;
+                padding: 5px 6px;
+            }
+            
+            .center-circle {
+                width: 62px;
+                height: 62px;
+            }
+            
+            .btn {
+                padding: 13px 25px;
+                font-size: 1rem;
+            }
+        }
+        
+        /* Pantalla de carga */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #121212;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            border-top-color: #4361ee;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+<div class="loading-screen" id="loading-screen">
+    <div class="spinner"></div>
+    <p>Cargando juego...</p>
+</div>
+
+<div id="main">
+    <button id="mute-btn">🔊</button>
+    <h1 id="title"></h1>
+    <div id="content"></div>
+</div>
+
+<script>
+    // Sistema de estado del juego
+    const GameState = {
+        START: 'start',
+        PLAYING: 'playing',
+        WIN: 'win',
+        LOSE: 'lose',
+        LOADING: 'loading'
+    };
+    
+    let config;
+    let currentQuestion = 0;
+    let gameState = GameState.LOADING;
+    let questions = [];
+    let audios = {};
+    let maxAttempts = 1;
+    let attempts = 0;
+    let muted = false;
+    let currentGameAttempts = 0;
+    let lastSelectedOption = null;
+
+    // Mostrar/ocultar pantalla de carga
+    function showLoading(show) {
+        document.getElementById('loading-screen').style.display = show ? 'flex' : 'none';
+    }
+
+    // Coordenadas polares
+    function polarToCartesian(cx, cy, r, angle) {
+        const rad = (angle - 90) * Math.PI / 180;
+        return {
+            x: cx + r * Math.cos(rad),
+            y: cy + r * Math.sin(rad)
+        };
+    }
+
+    // Dibujar rueda
+    function drawWheel(options, selectedIdx = null) {
+        const n = options.length;
+        const svgNS = 'http://www.w3.org/2000/svg';
+        const size = 340, cx = 170, cy = 170, r1 = 80, r2 = 160;
+        let svg = document.createElementNS(svgNS, 'svg');
+        svg.setAttribute('class', 'wheel-svg');
+        svg.setAttribute('width', size);
+        svg.setAttribute('height', size);
+        
+        // Fondo
+        const bgCircle = document.createElementNS(svgNS, 'circle');
+        bgCircle.setAttribute('cx', cx);
+        bgCircle.setAttribute('cy', cy);
+        bgCircle.setAttribute('r', r2 + 5);
+        bgCircle.setAttribute('fill', '#222');
+        svg.appendChild(bgCircle);
+        
+        // Segmentos
+        for (let i = 0; i < n; i++) {
+            const startAngle = (360 / n) * i;
+            const endAngle = (360 / n) * (i + 1);
+            const p1 = polarToCartesian(cx, cy, r1, startAngle);
+            const p2 = polarToCartesian(cx, cy, r2, startAngle);
+            const p3 = polarToCartesian(cx, cy, r2, endAngle);
+            const p4 = polarToCartesian(cx, cy, r1, endAngle);
+            
+            const d = `M${p1.x},${p1.y} L${p2.x},${p2.y} A${r2},${r2} 0 0,1 ${p3.x},${p3.y} L${p4.x},${p4.y} A${r1},${r1} 0 0,0 ${p1.x},${p1.y} Z`;
+            
+            const path = document.createElementNS(svgNS, 'path');
+            path.setAttribute('d', d);
+            
+            const color = i % 2 === 0 ? '#2c3e50' : '#34495e';
+            const highlight = selectedIdx === i ? '#1abc9c' : color;
+            
+            path.setAttribute('fill', highlight);
+            path.setAttribute('stroke', 'rgba(255,255,255,0.1)');
+            path.setAttribute('stroke-width', '1');
+            
+            if (selectedIdx === i) {
+                path.setAttribute('filter', 'url(#glow)');
+            }
+            
+            svg.appendChild(path);
+        }
+        
+        return svg;
+    }
+
+    // Pantalla de inicio
+    function showStartScreen() {
+        clearContent();
+        const c = document.getElementById('content');
+        
+        const startDiv = document.createElement('div');
+        startDiv.className = 'screen';
+        startDiv.innerHTML = `
+            <div style="margin-bottom: 30px;">
+                <h2>${config.title || 'Búsqueda del Tesoro'}</h2>
+                <p style="color: #aaa; max-width: 85%; margin: 20px auto;">Responde correctamente todas las preguntas para descubrir el tesoro</p>
+            </div>
+            <div style="margin-top: 30px;">
+                <button id="start-btn" class="btn">¡Comenzar Aventura!</button>
+            </div>
+        `;
+        
+        if (config.bgType === 'video') {
+            startDiv.style.background = 'rgba(0,0,0,0.6)';
+            startDiv.style.borderRadius = '20px';
+            startDiv.style.padding = '35px 20px';
+            startDiv.style.backdropFilter = 'blur(5px)';
+        }
+        
+        c.appendChild(startDiv);
+        document.getElementById('start-btn').addEventListener('click', startGame);
+    }
+
+    // Iniciar juego
+    function startGame() {
+        currentQuestion = 0;
+        attempts = 0;
+        currentGameAttempts = 0;
+        gameState = GameState.PLAYING;
+        showQuestion(0);
+    }
+
+    // Mostrar pregunta
+    function showQuestion(idx) {
+        if (gameState !== GameState.PLAYING) return;
+        
+        // Mensajes intermedios
+        if (config.intermediates && config.intermediates.length > 0) {
+            const intermediate = config.intermediates.find(i => i.insertAt === idx);
+            if (intermediate) {
+                showIntermediateMessage(intermediate, idx);
+                return;
+            }
+        }
+        
+        // Fin del juego
+        if (idx >= questions.length) {
+            showWinScreen();
+            if (audios.music) audios.music.pause();
+            return;
+        }
+        
+        clearContent();
+        updateAttemptsCounter();
+        
+        const q = questions[idx];
+        const c = document.getElementById('content');
+        
+        // Cabecera de pregunta
+        const header = document.createElement('div');
+        header.style.marginBottom = '20px';
+        header.innerHTML = `
+            <h2 style="margin-bottom: 10px;">${q.text}</h2>
+            ${currentGameAttempts > 0 ? `<p style="color: #ff6b6b;">Intentos restantes: ${maxAttempts - currentGameAttempts}</p>` : ''}
+        `;
+        c.appendChild(header);
+        
+        // Media
+        if (q.media) {
+            const ext = q.media.split('.').pop();
+            let mediaElement;
+            
+            if (['mp4','webm','ogg'].includes(ext)) {
+                mediaElement = document.createElement('video');
+                mediaElement.src = q.media;
+                mediaElement.controls = true;
+                mediaElement.autoplay = true;
+                mediaElement.playsInline = true;
+                mediaElement.muted = muted;
+            } else if (['mp3','wav','ogg'].includes(ext)) {
+                mediaElement = document.createElement('audio');
+                mediaElement.src = q.media;
+                mediaElement.controls = true;
+                mediaElement.autoplay = true;
+                mediaElement.muted = muted;
+            } else if (['jpg','jpeg','png','gif','webp'].includes(ext)) {
+                mediaElement = document.createElement('img');
+                mediaElement.src = q.media;
+            }
+            
+            if (mediaElement) {
+                mediaElement.className = 'question-media';
+                c.appendChild(mediaElement);
+            }
+        }
+        
+        // Contenedor de la rueda
+        const wheelContainer = document.createElement('div');
+        wheelContainer.className = 'wheel-container';
+        
+        // Crear rueda
+        const svg = drawWheel(q.options);
+        wheelContainer.appendChild(svg);
+        
+        // Etiquetas de opciones
+        const n = q.options.length;
+        for (let i = 0; i < n; i++) {
+            const angle = (360 / n) * i + 180 / n;
+            const pos = polarToCartesian(170, 170, 120, angle);
+            
+            const label = document.createElement('div');
+            label.className = 'option-label';
+            label.textContent = q.options[i];
+            label.style.left = `${pos.x}px`;
+            label.style.top = `${pos.y}px`;
+            wheelContainer.appendChild(label);
+        }
+        
+        // Flecha
+        const arrow = document.createElement('img');
+        arrow.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>';
+        arrow.className = 'arrow';
+        wheelContainer.appendChild(arrow);
+        
+        // Círculo central
+        const center = document.createElement('div');
+        center.className = 'center-circle';
+        
+        const centerText = document.createElement('div');
+        centerText.className = 'center-circle-text';
+        centerText.textContent = 'Arrastra para responder';
+        center.appendChild(centerText);
+        wheelContainer.appendChild(center);
+        
+        // Lógica de arrastre para móviles
+        let dragging = false;
+        let startX, startY;
+        let currentSelectedIdx = null;
+        let lastAngle = 0;
+        
+        function getAngle(x, y) {
+            const dx = x - startX;
+            const dy = y - startY;
+            let angle = Math.atan2(dy, dx) * 180 / Math.PI;
+            return angle < 0 ? angle + 360 : angle;
+        }
+        
+        function getOptionIdx(angle) {
+            return Math.floor((angle + 360 / n / 2) % 360 / (360 / n));
+        }
+        
+        function highlightOption(idx) {
+            // Quitar highlight previo
+            wheelContainer.querySelectorAll('.option-label').forEach(label => {
+                label.classList.remove('active');
+            });
+            
+            // Resaltar nueva opción
+            if (idx !== null && idx !== currentSelectedIdx) {
+                wheelContainer.querySelectorAll('.option-label')[idx].classList.add('active');
+                
+                // Actualizar SVG
+                const newSvg = drawWheel(q.options, idx);
+                const oldSvg = wheelContainer.querySelector('.wheel-svg');
+                wheelContainer.replaceChild(newSvg, oldSvg);
+                
+                currentSelectedIdx = idx;
+                playAudio('select');
+            }
+        }
+        
+        function handleStart(e) {
+            dragging = true;
+            startX = e.clientX || e.touches[0].clientX;
+            startY = e.clientY || e.touches[0].clientY;
+            e.preventDefault();
+        }
+        
+        function handleMove(e) {
+            if (!dragging) return;
+            
+            const clientX = e.clientX || e.touches[0].clientX;
+            const clientY = e.clientY || e.touches[0].clientY;
+            const angle = getAngle(clientX, clientY);
+            
+            // Actualizar flecha
+            arrow.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+            lastAngle = angle;
+            
+            const dx = clientX - startX;
+            const dy = clientY - startY;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            
+            if (dist > 40) {
+                const idx = getOptionIdx(angle);
+                highlightOption(idx);
+            } else {
+                if (currentSelectedIdx !== null) {
+                    currentSelectedIdx = null;
+                    highlightOption(null);
+                }
+            }
+            
+            e.preventDefault();
+        }
+        
+        function handleEnd(e) {
+            if (!dragging) return;
+            dragging = false;
+            
+            const clientX = e.clientX || (e.changedTouches ? e.changedTouches[0].clientX : 0);
+            const clientY = e.clientY || (e.changedTouches ? e.changedTouches[0].clientY : 0);
+            const dx = clientX - startX;
+            const dy = clientY - startY;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            
+            if (dist < 40 || currentSelectedIdx === null) { 
+                highlightOption(null);
+                return; 
+            }
+            
+            // Procesar respuesta
+            if (parseInt(q.correct) === currentSelectedIdx) {
+                playAudio('correct');
+                setTimeout(() => {
+                    attempts = 0;
+                    currentGameAttempts = 0;
+                    if (currentQuestion === questions.length - 1) {
+                        showWinScreen();
+                    } else {
+                        showFeedback('correct', currentQuestion);
+                    }
+                }, 400);
+            } else {
+                playAudio('wrong');
+                currentGameAttempts++;
+                attempts++;
+                
+                if (currentGameAttempts >= maxAttempts) {
+                    showLoseScreen();
+                } else {
+                    showFeedback('wrong', currentQuestion);
+                }
+            }
+        }
+        
+        // Eventos para móviles
+        center.addEventListener('pointerdown', handleStart);
+        center.addEventListener('touchstart', handleStart);
+        
+        document.addEventListener('pointermove', handleMove);
+        document.addEventListener('touchmove', handleMove);
+        
+        document.addEventListener('pointerup', handleEnd);
+        document.addEventListener('touchend', handleEnd);
+        document.addEventListener('pointercancel', handleEnd);
+        document.addEventListener('touchcancel', handleEnd);
+
+        c.appendChild(wheelContainer);
+    }
+
+    // Mensajes intermedios
+    function showIntermediateMessage(intermediate, questionIdx) {
+        const overlay = document.createElement('div');
+        overlay.className = 'intermediate-overlay';
+        
+        const content = document.createElement('div');
+        content.className = 'intermediate-content';
+        
+        if (intermediate.text) {
+            const text = document.createElement('h2');
+            text.style.color = '#6cf';
+            text.style.marginBottom = '20px';
+            text.textContent = intermediate.text;
+            content.appendChild(text);
+        }
+        
+        if (intermediate.media) {
+            const ext = intermediate.media.split('.').pop();
+            let mediaElement;
+            
+            if (['mp4','webm','ogg'].includes(ext)) {
+                mediaElement = document.createElement('video');
+                mediaElement.src = intermediate.media;
+                mediaElement.controls = true;
+                mediaElement.autoplay = true;
+                mediaElement.loop = false;
+                mediaElement.muted = muted;
+                mediaElement.className = 'question-media';
+            } else if (['jpg','jpeg','png','gif','webp'].includes(ext)) {
+                mediaElement = document.createElement('img');
+                mediaElement.src = intermediate.media;
+                mediaElement.className = 'question-media';
+            } else if (['mp3','wav','ogg'].includes(ext)) {
+                mediaElement = document.createElement('audio');
+                mediaElement.src = intermediate.media;
+                mediaElement.controls = true;
+                mediaElement.autoplay = true;
+                mediaElement.muted = muted;
+                mediaElement.className = 'question-media';
+            }
+            
+            if (mediaElement) content.appendChild(mediaElement);
+        }
+        
+        const closeButton = document.createElement('button');
+        closeButton.className = 'close-btn';
+        closeButton.textContent = '✕';
+        closeButton.addEventListener('click', () => {
+            overlay.remove();
+            showQuestion(questionIdx);
+        });
+        content.appendChild(closeButton);
+        
+        overlay.appendChild(content);
+        document.body.appendChild(overlay);
+    }
+
+    // Feedback
+    function showFeedback(type, idx) {
+        clearContent();
+        const c = document.getElementById('content');
+        
+        let configData, color, icon;
+        if (type === 'correct') {
+            configData = {
+                msg: config.correctMessage || '¡Respuesta correcta!',
+                media: config.correctMedia,
+                audio: config.correctAudio,
+                anim: config.correctAnim,
+                emojis: config.correctEmojis
+            };
+            color = '#1abc9c';
+            icon = '✓';
+        } else {
+            configData = {
+                msg: config.wrongMessage || 'Respuesta incorrecta. ¡Intenta de nuevo!',
+                media: config.wrongMedia,
+                audio: config.wrongAudio,
+                anim: config.wrongAnim,
+                emojis: config.wrongEmojis
+            };
+            color = '#e74c3c';
+            icon = '✗';
+        }
+        
+        const feedbackDiv = document.createElement('div');
+        feedbackDiv.className = 'screen';
+        feedbackDiv.innerHTML = `
+            <div style="font-size: 4em; margin-bottom: 20px; color: ${color};">${icon}</div>
+            <h3 style="color: ${color};">${configData.msg}</h3>
+        `;
+        
+        if (configData.media) {
+            const ext = configData.media.split('.').pop();
+            let mediaElement;
+            
+            if (['mp4','webm','ogg'].includes(ext)) {
+                mediaElement = document.createElement('video');
+                mediaElement.src = configData.media;
+                mediaElement.autoplay = true;
+                mediaElement.loop = false;
+                mediaElement.muted = muted;
+            } else if (['jpg','jpeg','png','gif','webp'].includes(ext)) {
+                mediaElement = document.createElement('img');
+                mediaElement.src = configData.media;
+            }
+            
+            if (mediaElement) {
+                mediaElement.className = 'question-media';
+                mediaElement.style.margin = '20px auto';
+                feedbackDiv.appendChild(mediaElement);
+            }
+        }
+        
+        c.appendChild(feedbackDiv);
+        
+        if (configData.audio) {
+            const audio = createAudio(configData.audio);
+            audio.play();
+        }
+        
+        if (configData.anim && configData.anim !== 'none') {
+            triggerAnimation(configData.anim, configData.emojis);
+        }
+        
+        setTimeout(() => {
+            if (type === 'correct') {
+                currentQuestion++;
+                showQuestion(currentQuestion);
+            } else {
+                showQuestion(currentQuestion);
+            }
+        }, 2000);
+    }
+
+    // Pantalla de victoria
+    function showWinScreen() {
+        gameState = GameState.WIN;
+        clearContent();
+        const c = document.getElementById('content');
+        
+        const winDiv = document.createElement('div');
+        winDiv.className = 'screen';
+        winDiv.innerHTML = `
+            <div style="font-size: 4em; margin-bottom: 20px;">🏆</div>
+            <h2 style="color: #ffd700;">${config.winMessage || '¡Felicidades! Has completado la búsqueda'}</h2>
+        `;
+        
+        if (config.winMedia) {
+            const ext = config.winMedia.split('.').pop();
+            let mediaElement;
+            
+            if (['mp4','webm','ogg'].includes(ext)) {
+                mediaElement = document.createElement('video');
+                mediaElement.src = config.winMedia;
+                mediaElement.autoplay = true;
+                mediaElement.loop = true;
+                mediaElement.muted = muted;
+            } else if (['jpg','jpeg','png','gif','webp'].includes(ext)) {
+                mediaElement = document.createElement('img');
+                mediaElement.src = config.winMedia;
+            }
+            
+            if (mediaElement) {
+                mediaElement.className = 'question-media';
+                winDiv.appendChild(mediaElement);
+            }
+        }
+        
+        const replayButton = document.createElement('button');
+        replayButton.className = 'btn';
+        replayButton.textContent = 'Jugar de nuevo';
+        replayButton.addEventListener('click', () => {
+            location.reload();
+        });
+        winDiv.appendChild(replayButton);
+        
+        c.appendChild(winDiv);
+        
+        if (config.winAudio) {
+            const audio = createAudio(config.winAudio);
+            audio.play();
+        }
+        
+        if (config.winAnim && config.winAnim !== 'none') {
+            triggerAnimation(config.winAnim, config.winEmojis);
+        }
+    }
+
+    // Pantalla de derrota
+    function showLoseScreen() {
+        gameState = GameState.LOSE;
+        clearContent();
+        const c = document.getElementById('content');
+        
+        const loseDiv = document.createElement('div');
+        loseDiv.className = 'screen';
+        loseDiv.innerHTML = `
+            <div style="font-size: 4em; margin-bottom: 20px;">💔</div>
+            <h2 style="color: #e74c3c;">${config.loseMessage || '¡Has perdido! Intenta de nuevo'}</h2>
+        `;
+        
+        if (config.loseMedia) {
+            const ext = config.loseMedia.split('.').pop();
+            let mediaElement;
+            
+            if (['mp4','webm','ogg'].includes(ext)) {
+                mediaElement = document.createElement('video');
+                mediaElement.src = config.loseMedia;
+                mediaElement.autoplay = true;
+                mediaElement.loop = true;
+                mediaElement.muted = muted;
+            } else if (['jpg','jpeg','png','gif','webp'].includes(ext)) {
+                mediaElement = document.createElement('img');
+                mediaElement.src = config.loseMedia;
+            }
+            
+            if (mediaElement) {
+                mediaElement.className = 'question-media';
+                loseDiv.appendChild(mediaElement);
+            }
+        }
+        
+        const retryButton = document.createElement('button');
+        retryButton.className = 'btn';
+        retryButton.textContent = 'Reintentar';
+        retryButton.addEventListener('click', () => {
+            location.reload();
+        });
+        loseDiv.appendChild(retryButton);
+        
+        c.appendChild(loseDiv);
+        
+        if (config.loseAudio) {
+            const audio = createAudio(config.loseAudio);
+            audio.play();
+        }
+        
+        if (config.loseAnim && config.loseAnim !== 'none') {
+            triggerAnimation(config.loseAnim, config.loseEmojis);
+        }
+    }
+
+    // Animaciones
+    function triggerAnimation(anim, emojis) {
+        if (anim === 'confetti') {
+            confettiEffect();
+        } else if (anim === 'emojis' || anim === 'custom') {
+            emojiEffect(emojis);
+        } else if (anim === 'explosion') {
+            explosionEffect();
+        } else if (anim === 'shake') {
+            document.body.classList.add('shake');
+            setTimeout(() => {
+                document.body.classList.remove('shake');
+            }, 700);
+        }
+    }
+
+    function confettiEffect() {
+        const colors = ['#ff6b6b', '#48dbfb', '#1dd1a1', '#feca57', '#ff9ff3'];
+        for (let i = 0; i < 50; i++) {
+            setTimeout(() => {
+                const confetti = document.createElement('div');
+                confetti.className = 'particle';
+                confetti.innerHTML = '🎉';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '100vh';
+                confetti.style.fontSize = (20 + Math.random() * 20) + 'px';
+                confetti.style.color = colors[Math.floor(Math.random() * colors.length)];
+                
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => {
+                    confetti.remove();
+                }, 1200);
+            }, i * 30);
+        }
+    }
+
+    function emojiEffect(emojis) {
+        const emojiArray = emojis ? 
+            emojis.split(',').map(e => e.trim()).filter(Boolean) : 
+            ['✨', '⭐', '💖'];
+        
+        for (let i = 0; i < 25; i++) {
+            setTimeout(() => {
+                const emoji = document.createElement('div');
+                emoji.className = 'particle';
+                emoji.textContent = emojiArray[Math.floor(Math.random() * emojiArray.length)];
+                emoji.style.left = Math.random() * 100 + 'vw';
+                emoji.style.top = '100vh';
+                emoji.style.fontSize = (24 + Math.random() * 24) + 'px';
+                
+                document.body.appendChild(emoji);
+                
+                setTimeout(() => {
+                    emoji.remove();
+                }, 1200);
+            }, i * 50);
+        }
+    }
+
+    function explosionEffect() {
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.textContent = '💥';
+            particle.style.left = '50vw';
+            particle.style.top = '50vh';
+            particle.style.fontSize = (20 + Math.random() * 30) + 'px';
+            particle.style.transform = `translate(-50%, -50%) rotate(${Math.random() * 360}deg)`;
+            
+            document.body.appendChild(particle);
+            
+            setTimeout(() => {
+                particle.style.left = (30 + Math.random() * 40) + 'vw';
+                particle.style.top = (20 + Math.random() * 60) + 'vh';
+                particle.style.opacity = '0';
+            }, 10);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, 800);
+        }
+    }
+
+    // Funciones auxiliares
+    function createAudio(src) {
+        const audio = new Audio(src);
+        audio.preload = 'auto';
+        audio.volume = muted ? 0 : 0.7;
+        return audio;
+    }
+
+    function playAudio(key) {
+        if (audios[key] && !muted) {
+            audios[key].currentTime = 0;
+            audios[key].play();
+        }
+    }
+
+    function clearContent() {
+        const c = document.getElementById('content');
+        c.innerHTML = '';
+    }
+
+    function updateAttemptsCounter() {
+        const counter = document.querySelector('.attempts-counter');
+        if (counter) counter.remove();
+        
+        if (gameState === GameState.PLAYING && maxAttempts > 1) {
+            const counter = document.createElement('div');
+            counter.className = 'attempts-counter';
+            counter.textContent = `Intentos: ${currentGameAttempts}/${maxAttempts}`;
+            document.getElementById('main').appendChild(counter);
+        }
+    }
+
+    // Cargar configuración
+    async function loadConfig() {
+        showLoading(true);
+        const url = window.location.pathname;
+        const gameId = url.split('/')[2];
+        
+        try {
+            const res = await fetch(`/api/game/${gameId}/config`);
+            if (!res.ok) throw new Error('Error loading config');
+            
+            config = await res.json();
+            
+            // Título
+            document.getElementById('title').textContent = config.title || 'Búsqueda del Tesoro';
+            document.title = config.title || 'Búsqueda del Tesoro';
+            
+            // Estilos
+            document.body.style.background = config.bgType === 'color' ? config.bgColor : '#111';
+            document.body.style.color = config.textColor || '#fff';
+            
+            // Fondo
+            if (config.bgType === 'image' && config.bgFile) {
+                document.body.style.backgroundImage = `url('${config.bgFile}')`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundPosition = 'center';
+            } else if (config.bgType === 'video' && config.bgFile) {
+                const video = document.createElement('video');
+                video.src = config.bgFile;
+                video.autoplay = true;
+                video.loop = true;
+                video.muted = true;
+                video.playsInline = true;
+                video.style.position = 'fixed';
+                video.style.top = '0';
+                video.style.left = '0';
+                video.style.width = '100%';
+                video.style.height = '100%';
+                video.style.objectFit = 'cover';
+                video.style.zIndex = '-1';
+                document.body.appendChild(video);
+            }
+            
+            // Audios
+            const loadAudio = (key, file) => {
+                if (file) audios[key] = createAudio(file);
+            };
+            
+            loadAudio('music', config.music);
+            loadAudio('select', config.soundSelect);
+            loadAudio('correct', config.soundCorrect);
+            loadAudio('wrong', config.soundWrong);
+            
+            if (audios.music) {
+                audios.music.loop = true;
+                audios.music.volume = 0.5;
+                audios.music.play();
+            }
+            
+            // Preguntas e intermedios
+            questions = config.questions || [];
+            config.intermediates = config.intermediates || [];
+            
+            // Intentos
+            maxAttempts = parseInt(config.maxAttempts) || 1;
+            currentGameAttempts = 0;
+            
+            // Botón de mute
+            document.getElementById('mute-btn').addEventListener('click', function() {
+                muted = !muted;
+                this.textContent = muted ? '🔇' : '🔊';
+                if (audios.music) audios.music.muted = muted;
+            });
+            
+            showStartScreen();
+        } catch (err) {
+            console.error('Error loading game config:', err);
+            document.getElementById('content').innerHTML = `
+                <div class="screen">
+                    <h2 style="color: #e74c3c;">Error al cargar el juego</h2>
+                    <p>${err.message}</p>
+                    <button class="btn" onclick="location.reload()">Reintentar</button>
+                </div>
+            `;
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    // Inicialización
+    window.onload = loadConfig;
+</script>
+</body>
+</html>

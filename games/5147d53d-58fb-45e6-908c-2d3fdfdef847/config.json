@@ -1,0 +1,59 @@
+{
+  "title": "Jsis",
+  "bgColor": "#1a2a6c",
+  "bgType": "color",
+  "textColor": "#ffffff",
+  "btnColor": "#4361ee",
+  "music": null,
+  "soundSelect": null,
+  "soundCorrect": null,
+  "soundWrong": null,
+  "bgFile": null,
+  "questions": [
+    {
+      "text": "usj",
+      "options": [
+        "K",
+        "I",
+        "U",
+        "J"
+      ],
+      "correct": "0",
+      "media": null
+    },
+    {
+      "text": "Karikan",
+      "options": [
+        "Avatar ",
+        "Julius",
+        "Darius",
+        "Draven"
+      ],
+      "correct": "0",
+      "media": null
+    }
+  ],
+  "intermediates": [],
+  "maxAttempts": "3",
+  "particleColor": "#ffd700",
+  "correctMessage": "¡Correcto!",
+  "correctMedia": null,
+  "correctAudio": null,
+  "correctAnim": "confetti",
+  "correctEmojis": "🎉,🌟,💫",
+  "wrongMessage": "¡Incorrecto! Intenta de nuevo",
+  "wrongMedia": null,
+  "wrongAudio": null,
+  "wrongAnim": "shake",
+  "wrongEmojis": "💥,😢,❌",
+  "winMessage": "¡Felicidades! Has ganado",
+  "winMedia": null,
+  "winAudio": null,
+  "winAnim": "confetti",
+  "winEmojis": "🏆,🎊,🥳",
+  "loseMessage": "¡Has perdido! Intenta de nuevo",
+  "loseMedia": null,
+  "loseAudio": null,
+  "loseAnim": "shake",
+  "loseEmojis": "💔,😢,☠️"
+}

@@ -1,0 +1,61 @@
+{
+  "title": "df",
+  "bgColor": "#1a2a6c",
+  "bgType": "image",
+  "textColor": "#ffffff",
+  "btnColor": "#4361ee",
+  "music": null,
+  "soundSelect": null,
+  "soundCorrect": null,
+  "soundWrong": null,
+  "bgFile": "/games/8e61231e-2b8d-47bc-82b6-b3f0230a6acc/1754594999199-513167882.gif",
+  "questions": [
+    {
+      "text": "f",
+      "options": [
+        "a",
+        "f",
+        "c",
+        "b"
+      ],
+      "correct": "0",
+      "media": null
+    },
+    {
+      "text": "adfa",
+      "options": [
+        "vx",
+        "sgasg",
+        "asdfgafga",
+        "aag",
+        "gasdg",
+        "aasdg"
+      ],
+      "correct": "0",
+      "media": null
+    }
+  ],
+  "intermediates": [],
+  "maxAttempts": "3",
+  "particleColor": "#ffd700",
+  "correctMessage": "¡Correcto!",
+  "correctMedia": null,
+  "correctAudio": null,
+  "correctAnim": "confetti",
+  "correctEmojis": "wii",
+  "wrongMessage": "¡Incorrecto! Intenta de nuevo",
+  "wrongMedia": null,
+  "wrongAudio": null,
+  "wrongAnim": "shake",
+  "wrongEmojis": "❌",
+  "winMessage": "¡Felicidades! Has ganado",
+  "winMedia": null,
+  "winAudio": null,
+  "winAnim": "confetti",
+  "winEmojis": "🏆,🎊,🥳",
+  "loseMessage": "¡Has perdido! Intenta de nuevo",
+  "loseMedia": null,
+  "loseAudio": null,
+  "loseAnim": "explosion",
+  "loseEmojis": "☠️"
+}

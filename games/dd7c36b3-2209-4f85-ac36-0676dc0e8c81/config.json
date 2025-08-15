@@ -1,0 +1,68 @@
+{
+  "title": "En busqueda del amor",
+  "bgColor": "#1a2a6c",
+  "bgType": "image",
+  "textColor": "#feecec",
+  "btnColor": "#e00099",
+  "music": "/games/dd7c36b3-2209-4f85-ac36-0676dc0e8c81/1754615379330-163763845.mp3",
+  "soundSelect": "/games/dd7c36b3-2209-4f85-ac36-0676dc0e8c81/1754615380915-793514970.ogg",
+  "soundCorrect": "/games/dd7c36b3-2209-4f85-ac36-0676dc0e8c81/1754615380915-68169946.ogg",
+  "soundWrong": "/games/dd7c36b3-2209-4f85-ac36-0676dc0e8c81/1754615380915-798892270.ogg",
+  "bgFile": "/games/dd7c36b3-2209-4f85-ac36-0676dc0e8c81/1754615378931-735864525.gif",
+  "questions": [
+    {
+      "text": "adfa",
+      "options": [
+        "a",
+        "ada",
+        "afaa",
+        "fasd"
+      ],
+      "correct": "0",
+      "media": "/games/dd7c36b3-2209-4f85-ac36-0676dc0e8c81/1754615380916-769638788.ogg"
+    },
+    {
+      "text": "asfasf",
+      "options": [
+        "asdf",
+        "asdf",
+        "sdf",
+        "a"
+      ],
+      "correct": "0",
+      "media": "/games/dd7c36b3-2209-4f85-ac36-0676dc0e8c81/1754615380916-765062665.ogg"
+    },
+    {
+      "text": "sdfasdf",
+      "options": [
+        "<",
+        "cd"
+      ],
+      "correct": "0",
+      "media": null
+    }
+  ],
+  "intermediates": [],
+  "maxAttempts": "3",
+  "particleColor": "#ffd700",
+  "correctMessage": "ESOOOOOO",
+  "correctMedia": "/games/dd7c36b3-2209-4f85-ac36-0676dc0e8c81/1754615378932-808229564.gif",
+  "correctAudio": "/games/dd7c36b3-2209-4f85-ac36-0676dc0e8c81/1754615378932-722884273.ogg",
+  "correctAnim": "confetti",
+  "correctEmojis": "🎉,🌟,💫",
+  "wrongMessage": "nou",
+  "wrongMedia": "/games/dd7c36b3-2209-4f85-ac36-0676dc0e8c81/1754615378996-504990573.gif",
+  "wrongAudio": "/games/dd7c36b3-2209-4f85-ac36-0676dc0e8c81/1754615378996-555417027.ogg",
+  "wrongAnim": "shake",
+  "wrongEmojis": "💥,😢,❌",
+  "winMessage": "VAMOOO",
+  "winMedia": "/games/dd7c36b3-2209-4f85-ac36-0676dc0e8c81/1754615378996-97342621.gif",
+  "winAudio": "/games/dd7c36b3-2209-4f85-ac36-0676dc0e8c81/1754615378996-261940579.ogg",
+  "winAnim": "confetti",
+  "winEmojis": "🏆,🎊,🥳",
+  "loseMessage": "Esta mal...en algo",
+  "loseMedia": "/games/dd7c36b3-2209-4f85-ac36-0676dc0e8c81/1754615379027-499493854.gif",
+  "loseAudio": "/games/dd7c36b3-2209-4f85-ac36-0676dc0e8c81/1754615379027-897281748.wav",
+  "loseAnim": "shake",
+  "loseEmojis": "💔,😢,☠️"
+}
