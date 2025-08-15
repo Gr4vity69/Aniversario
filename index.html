@@ -526,8 +526,14 @@
         clearContent();
         updateAttemptsCounter();
 
-        // Eliminar cualquier media previa
-        document.querySelectorAll('.question-media').forEach(el => el.remove());
+        // Eliminar y detener cualquier media previa
+        document.querySelectorAll('.question-media').forEach(el => {
+            if (el.tagName === 'AUDIO' || el.tagName === 'VIDEO') {
+                el.pause();
+                el.currentTime = 0;
+            }
+            el.remove();
+        });
 
         const q = questions[idx];
         const c = document.getElementById('content');
