@@ -4,11 +4,11 @@
   "bgType": "image",
   "textColor": "#ffffff",
   "btnColor": "#ee44b8",
-  "music": "1754624482047-128477669.mp3",
-  "soundSelect": "1754624484280-165826509.ogg",
-  "soundCorrect": "1754624484281-281180299.ogg",
-  "soundWrong": "1754624484285-47280715.ogg",
-  "bgFile": "1754624479547-710358753.gif",
+  "music": "./games/9f96e584-b789-4428-abc6-d0ca73499f1b/1754624482047-128477669.mp3",
+  "soundSelect": "./games/9f96e584-b789-4428-abc6-d0ca73499f1b/1754624484280-165826509.ogg",
+  "soundCorrect": "./games/9f96e584-b789-4428-abc6-d0ca73499f1b/1754624484281-281180299.ogg",
+  "soundWrong": "./games/9f96e584-b789-4428-abc6-d0ca73499f1b/1754624484285-47280715.ogg",
+  "bgFile": "./games/9f96e584-b789-4428-abc6-d0ca73499f1b/1754624479547-710358753.gif",
   "questions": [
     {
       "text": "¿Cual fue el lugar de nuestro primer beso?",
@@ -21,7 +21,7 @@
         "ninguna de las anteriores"
       ],
       "correct": "5",
-  "media": "1754624484286-838644578.mp3"
+  "media": "./games/9f96e584-b789-4428-abc6-d0ca73499f1b/1754624484286-838644578.mp3"
     },
     {
       "text": "¿De que forma te ayudaba a calmarte?",
@@ -32,7 +32,7 @@
         "cantaba fly me to the moon"
       ],
       "correct": "0",
-  "media": "1754624485444-635955390.mp4"
+  "media": "./games/9f96e584-b789-4428-abc6-d0ca73499f1b/1754624485444-635955390.mp4"
     },
     {
       "text": "NOTHING BEATS A",
@@ -42,7 +42,7 @@
         "JET TWO HOLIDAY"
       ],
       "correct": "2",
-  "media": "1754624485500-971126384.mp3"
+  "media": "./games/9f96e584-b789-4428-abc6-d0ca73499f1b/1754624485500-971126384.mp3"
     },
     {
       "text": "¿Cual es mi comida favorita?",
@@ -53,7 +53,7 @@
         "fideos al pesto"
       ],
       "correct": "1",
-  "media": "1754624486597-132737933.mp4"
+  "media": "./games/9f96e584-b789-4428-abc6-d0ca73499f1b/1754624486597-132737933.mp4"
     },
     {
       "text": "¿Con que cancion tengo editado un video juntos?",
@@ -116,23 +116,23 @@
   "maxAttempts": "3",
   "particleColor": "#ffd700",
   "correctMessage": "Vas por buen camino",
-  "correctMedia": "1754624479810-916511154.gif",
+  "correctMedia": "./games/9f96e584-b789-4428-abc6-d0ca73499f1b/1754624479810-916511154.gif",
   "correctAudio": null,
   "correctAnim": "confetti",
   "correctEmojis": "🎉,🌟,💫",
   "wrongMessage": "Esta maaal",
-  "wrongMedia": "1754624479810-320217378.gif",
+  "wrongMedia": "./games/9f96e584-b789-4428-abc6-d0ca73499f1b/1754624479810-320217378.gif",
   "wrongAudio": null,
   "wrongAnim": "shake",
   "wrongEmojis": "💥,😢,❌",
-  "winMessage": "¡ESOOOO! Reclama tu premio linda",
-  "winMedia": "1754624479810-298210974.gif",
-  "winAudio": "1754624479810-292481821.ogg",
+  "winMessage": "¡Felicidades! Has ganado",
+  "winMedia": "./games/9f96e584-b789-4428-abc6-d0ca73499f1b/1754624479810-298210974.gif",
+  "winAudio": "./games/9f96e584-b789-4428-abc6-d0ca73499f1b/1754624479810-292481821.ogg",
   "winAnim": "confetti",
   "winEmojis": "🏆,🎊,🥳",
-  "loseMessage": "Me parece que no se va a poder",
-  "loseMedia": "1754624480209-445356662.gif",
-  "loseAudio": "1754624480210-624474842.wav",
+  "loseMessage": "¡Has perdido! Intenta de nuevo",
+  "loseMedia": "./games/9f96e584-b789-4428-abc6-d0ca73499f1b/1754624480209-445356662.gif",
+  "loseAudio": "./games/9f96e584-b789-4428-abc6-d0ca73499f1b/1754624480210-624474842.wav",
   "loseAnim": "shake",
   "loseEmojis": "💔,😢,☠️"
 }

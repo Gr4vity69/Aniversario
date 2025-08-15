@@ -605,9 +605,7 @@
         centerText.className = 'center-circle-text';
         centerText.textContent = 'Arrastra para responder';
         center.appendChild(centerText);
-        header.style.marginBottom = '20px';
-        let mediaPath = `9f96e584-b789-4428-abc6-d0ca73499f1b/${q.media}`;
-        // ...código para mostrar media usando mediaPath...
+        wheelContainer.appendChild(center);
         
         // Lógica de arrastre para móviles
         let dragging = false;
@@ -1101,27 +1099,27 @@
         const gameId = url.split('/')[2];
         
         try {
-            const res = await fetch('config.json'); // Carga local
-            if (!res.ok) throw new Error('Error loading config');
-            
+            // Cargar config.json desde la raíz del proyecto
+            const res = await fetch('./config.json');
+            if (!res.ok) throw new Error('Error cargando config.json');
             config = await res.json();
-            
+
             // Título
             document.getElementById('title').textContent = config.title || 'Búsqueda del Tesoro';
             document.title = config.title || 'Búsqueda del Tesoro';
-            
+
             // Estilos
             document.body.style.background = config.bgType === 'color' ? config.bgColor : '#111';
             document.body.style.color = config.textColor || '#fff';
-            
+
             // Fondo
             if (config.bgType === 'image' && config.bgFile) {
-                document.body.style.backgroundImage = `url('9f96e584-b789-4428-abc6-d0ca73499f1b/${config.bgFile}')`;
+                document.body.style.backgroundImage = `url('${config.bgFile}')`;
                 document.body.style.backgroundSize = 'cover';
                 document.body.style.backgroundPosition = 'center';
             } else if (config.bgType === 'video' && config.bgFile) {
                 const video = document.createElement('video');
-                video.src = `9f96e584-b789-4428-abc6-d0ca73499f1b/${config.bgFile}`;
+                video.src = config.bgFile;
                 video.autoplay = true;
                 video.loop = true;
                 video.muted = true;
@@ -1135,7 +1133,7 @@
                 video.style.zIndex = '-1';
                 document.body.appendChild(video);
             }
-            
+
             // Audios (efectos de sonido)
             const loadAudio = (key, file) => {
                 if (file) {
@@ -1143,37 +1141,37 @@
                     audios[key].preload = 'auto';
                 }
             };
-            
-            loadAudio('select', `9f96e584-b789-4428-abc6-d0ca73499f1b/${config.soundSelect}`);
-            loadAudio('correct', `9f96e584-b789-4428-abc6-d0ca73499f1b/${config.soundCorrect}`);
-            loadAudio('wrong', `9f96e584-b789-4428-abc6-d0ca73499f1b/${config.soundWrong}`);
-            
+
+            loadAudio('select', config.soundSelect);
+            loadAudio('correct', config.soundCorrect);
+            loadAudio('wrong', config.soundWrong);
+
             // Música de fondo
             if (config.music) {
-                audios.music = new Audio(`9f96e584-b789-4428-abc6-d0ca73499f1b/${config.music}`);
+                audios.music = new Audio(config.music);
                 audios.music.loop = true;
                 audios.music.volume = 0.5;
                 audios.music.preload = 'auto';
             }
-            
+
             // Preguntas e intermedios
             questions = config.questions || [];
             config.intermediates = config.intermediates || [];
-            
+
             // Intentos
             maxAttempts = parseInt(config.maxAttempts) || 1;
             currentGameAttempts = 0;
-            
+
             // Botón de mute
             document.getElementById('mute-btn').addEventListener('click', function() {
                 muted = !muted;
                 this.textContent = muted ? '🔇' : '🔊';
-                
+
                 // Actualizar estado de todos los audios
                 Object.values(audios).forEach(audio => {
                     audio.muted = muted;
                 });
-                
+
                 // Actualizar música
                 if (audios.music) {
                     if (!muted && gameState === GameState.PLAYING) {
@@ -1181,7 +1179,7 @@
                     }
                 }
             });
-            
+
             showStartScreen();
         } catch (err) {
             console.error('Error loading game config:', err);
