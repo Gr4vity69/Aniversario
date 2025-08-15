@@ -75,7 +75,7 @@
         "La rótula",
         "El esternocleidomastoideo"
       ],
-      "correct": "0",
+      "correct": "1",
       "media": null
     },
     {
@@ -86,7 +86,7 @@
         "Marco Aurelio",
         "Caligula"
       ],
-      "correct": "0",
+      "correct": "2",
       "media": null
     },
     {
@@ -97,7 +97,7 @@
         "Vincent van Gogh",
         "Claude Monet"
       ],
-      "correct": "0",
+      "correct": "2",
       "media": null
     },
     {
@@ -108,7 +108,7 @@
         "Obvi",
         "No"
       ],
-      "correct": "0",
+      "correct": "1",
       "media": null
     }
   ],
@@ -125,12 +125,12 @@
   "wrongAudio": null,
   "wrongAnim": "shake",
   "wrongEmojis": "💥,😢,❌",
-  "winMessage": "¡Felicidades! Has ganado",
+  "winMessage": "¡ESOOOO! reclama tu premio preciosa",
   "winMedia": "./games/9f96e584-b789-4428-abc6-d0ca73499f1b/1754624479810-298210974.gif",
   "winAudio": "./games/9f96e584-b789-4428-abc6-d0ca73499f1b/1754624479810-292481821.ogg",
   "winAnim": "confetti",
   "winEmojis": "🏆,🎊,🥳",
-  "loseMessage": "¡Has perdido! Intenta de nuevo",
+  "loseMessage": "Mejor suerte la proxima bonita",
   "loseMedia": "./games/9f96e584-b789-4428-abc6-d0ca73499f1b/1754624480209-445356662.gif",
   "loseAudio": "./games/9f96e584-b789-4428-abc6-d0ca73499f1b/1754624480210-624474842.wav",
   "loseAnim": "shake",

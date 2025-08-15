@@ -552,28 +552,35 @@
                 const ext = q.media.split('.').pop().toLowerCase();
                 let mediaElement;
 
-                if (["mp4","webm","ogg"].includes(ext)) {
-                    mediaElement = document.createElement("video");
-                    mediaElement.src = q.media;
-                    mediaElement.controls = true;
-                    mediaElement.playsInline = true;
-                    mediaElement.muted = muted;
-                    mediaElement.className = "question-media";
-                } else if (["mp3","wav","ogg"].includes(ext)) {
-                    mediaElement = document.createElement("audio");
-                    mediaElement.src = q.media;
-                    mediaElement.controls = true;
-                    mediaElement.muted = muted;
-                    mediaElement.className = "question-media";
-                } else if (["jpg","jpeg","png","gif","webp"].includes(ext)) {
-                    mediaElement = document.createElement("img");
-                    mediaElement.src = q.media;
-                    mediaElement.className = "question-media sprite-large";
+            if (["mp4","webm","ogg"].includes(ext)) {
+                mediaElement = document.createElement("video");
+                mediaElement.src = q.media;
+                mediaElement.controls = true;
+                mediaElement.playsInline = true;
+                mediaElement.muted = muted;
+                mediaElement.className = "question-media";
+                c.appendChild(mediaElement);
+                // Reproducir automáticamente solo en pregunta 9 (índice 8)
+                if (idx === 8) {
+                    setTimeout(() => { mediaElement.play(); }, 200);
                 }
-
-                if (mediaElement) {
-                    c.appendChild(mediaElement);
+            } else if (["mp3","wav","ogg"].includes(ext)) {
+                mediaElement = document.createElement("audio");
+                mediaElement.src = q.media;
+                mediaElement.controls = true;
+                mediaElement.muted = muted;
+                mediaElement.className = "question-media";
+                c.appendChild(mediaElement);
+                // Reproducir automáticamente solo en pregunta 3 (índice 2)
+                if (idx === 2) {
+                    setTimeout(() => { mediaElement.play(); }, 200);
                 }
+            } else if (["jpg","jpeg","png","gif","webp"].includes(ext)) {
+                mediaElement = document.createElement("img");
+                mediaElement.src = q.media;
+                mediaElement.className = "question-media sprite-large";
+                c.appendChild(mediaElement);
+            }
             }
         
         // Contenedor de la rueda
