@@ -542,35 +542,33 @@
         c.appendChild(header);
 
         // Media SOLO si existe en la pregunta actual
-        if (q.media) {
-            const ext = q.media.split('.').pop().toLowerCase();
-            let mediaElement;
+            if (q.media) {
+                const ext = q.media.split('.').pop().toLowerCase();
+                let mediaElement;
 
-            if (['mp4','webm','ogg'].includes(ext)) {
-                mediaElement = document.createElement('video');
-                mediaElement.src = q.media;
-                mediaElement.controls = true;
-                mediaElement.autoplay = true;
-                mediaElement.playsInline = true;
-                mediaElement.muted = muted;
-                mediaElement.className = 'question-media';
-            } else if (['mp3','wav','ogg'].includes(ext)) {
-                mediaElement = document.createElement('audio');
-                mediaElement.src = q.media;
-                mediaElement.controls = true;
-                mediaElement.autoplay = true;
-                mediaElement.muted = muted;
-                mediaElement.className = 'question-media';
-            } else if (['jpg','jpeg','png','gif','webp'].includes(ext)) {
-                mediaElement = document.createElement('img');
-                mediaElement.src = q.media;
-                mediaElement.className = 'question-media sprite-large';
-            }
+                if (["mp4","webm","ogg"].includes(ext)) {
+                    mediaElement = document.createElement("video");
+                    mediaElement.src = q.media;
+                    mediaElement.controls = true;
+                    mediaElement.playsInline = true;
+                    mediaElement.muted = muted;
+                    mediaElement.className = "question-media";
+                } else if (["mp3","wav","ogg"].includes(ext)) {
+                    mediaElement = document.createElement("audio");
+                    mediaElement.src = q.media;
+                    mediaElement.controls = true;
+                    mediaElement.muted = muted;
+                    mediaElement.className = "question-media";
+                } else if (["jpg","jpeg","png","gif","webp"].includes(ext)) {
+                    mediaElement = document.createElement("img");
+                    mediaElement.src = q.media;
+                    mediaElement.className = "question-media sprite-large";
+                }
 
-            if (mediaElement) {
-                c.appendChild(mediaElement);
+                if (mediaElement) {
+                    c.appendChild(mediaElement);
+                }
             }
-        }
         
         // Contenedor de la rueda
         const wheelContainer = document.createElement('div');
