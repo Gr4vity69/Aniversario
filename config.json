@@ -56,28 +56,6 @@
   "media": null
     },
     {
-      "text": "¿Cual es mi bebida favorita?",
-      "options": [
-        "Fernet con coca",
-        "Cerveza rubia",
-        "Gancia con pomelo",
-        "Vino tinto"
-      ],
-      "correct": "0",
-      "media": null
-    },
-    {
-      "text": "¿Cual es mi animal favorito?",
-      "options": [
-        "Perro",
-        "Gato",
-        "Pájaro",
-        "Conejo"
-      ],
-      "correct": "0",
-      "media": null
-    },
-    {
       "text": "¿Con que cancion tengo editado un video juntos?",
       "options": [
         "You spin me round",
