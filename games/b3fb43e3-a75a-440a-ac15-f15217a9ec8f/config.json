@@ -1,0 +1,59 @@
+{
+  "title": "Trivia del amor",
+  "bgColor": "#000000",
+  "bgType": "image",
+  "textColor": "#ffffff",
+  "btnColor": "#030b30",
+  "music": "/games/b3fb43e3-a75a-440a-ac15-f15217a9ec8f/1754615105656-496403310.mp3",
+  "soundSelect": "/games/b3fb43e3-a75a-440a-ac15-f15217a9ec8f/1754615107398-94951635.ogg",
+  "soundCorrect": "/games/b3fb43e3-a75a-440a-ac15-f15217a9ec8f/1754615107398-620278236.ogg",
+  "soundWrong": "/games/b3fb43e3-a75a-440a-ac15-f15217a9ec8f/1754615107408-362804634.ogg",
+  "bgFile": "/games/b3fb43e3-a75a-440a-ac15-f15217a9ec8f/1754615105078-883278865.gif",
+  "questions": [
+    {
+      "text": "twre",
+      "options": [
+        "wet",
+        "wert",
+        "wert",
+        "wetr"
+      ],
+      "correct": "0",
+      "media": "/games/b3fb43e3-a75a-440a-ac15-f15217a9ec8f/1754615107409-597013277.ogg"
+    },
+    {
+      "text": "rewtw",
+      "options": [
+        "twe",
+        "wetw",
+        "wb",
+        "wetw"
+      ],
+      "correct": "0",
+      "media": "/games/b3fb43e3-a75a-440a-ac15-f15217a9ec8f/1754615107413-557205638.ogg"
+    }
+  ],
+  "intermediates": [],
+  "maxAttempts": "3",
+  "particleColor": "#ffd700",
+  "correctMessage": "ESOOO",
+  "correctMedia": "/games/b3fb43e3-a75a-440a-ac15-f15217a9ec8f/1754615105138-314458468.gif",
+  "correctAudio": "/games/b3fb43e3-a75a-440a-ac15-f15217a9ec8f/1754615105138-633889564.ogg",
+  "correctAnim": "confetti",
+  "correctEmojis": "wii",
+  "wrongMessage": "ayayay mal",
+  "wrongMedia": "/games/b3fb43e3-a75a-440a-ac15-f15217a9ec8f/1754615105171-382758090.gif",
+  "wrongAudio": "/games/b3fb43e3-a75a-440a-ac15-f15217a9ec8f/1754615105171-700187378.ogg",
+  "wrongAnim": "shake",
+  "wrongEmojis": "❌",
+  "winMessage": "TE GANASTE UN VIAJE A CANCUN",
+  "winMedia": "/games/b3fb43e3-a75a-440a-ac15-f15217a9ec8f/1754615105171-614727653.gif",
+  "winAudio": "/games/b3fb43e3-a75a-440a-ac15-f15217a9ec8f/1754615105177-120017074.ogg",
+  "winAnim": "confetti",
+  "winEmojis": "🏆,🎊,🥳",
+  "loseMessage": "esta mal...en algo",
+  "loseMedia": "/games/b3fb43e3-a75a-440a-ac15-f15217a9ec8f/1754615105236-832702081.gif",
+  "loseAudio": "/games/b3fb43e3-a75a-440a-ac15-f15217a9ec8f/1754615105236-424713809.wav",
+  "loseAnim": "explosion",
+  "loseEmojis": "☠️"
+}

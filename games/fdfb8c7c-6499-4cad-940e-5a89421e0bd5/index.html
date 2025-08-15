@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Búsqueda del Tesoro</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background: #111;
+            color: #fff;
+            overscroll-behavior: contain;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+            overflow-x: hidden;
+        }
+        #main {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .wheel-container {
+            position: relative;
+            width: 340px;
+            height: 340px;
+            margin: 40px auto 20px auto;
+        }
+        .wheel-svg {
+            width: 100%;
+            height: 100%;
+        }
+        .option-label {
+            position: absolute;
+            width: 120px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: #fff;
+            font-size: 1.1em;
+            pointer-events: none;
+            font-weight: bold;
+            text-shadow: 0 0 8px #000;
+            transition: transform 0.15s, background 0.15s, box-shadow 0.15s;
+            z-index: 5;
+        }
+        .option-label.active {
+            background: #1abc9c;
+            color: #fff;
+            border-radius: 20px;
+            box-shadow: 0 0 20px #1abc9c88;
+            transform: translate(-50%, -50%) scale(1.18);
+        }
+        .arrow {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 40px;
+            height: 40px;
+            transform: translate(-50%, -50%) rotate(0deg);
+            z-index: 2;
+            pointer-events: none;
+        }
+        .center-circle {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 80px;
+            height: 80px;
+            background: #222;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            box-shadow: 0 0 20px #000a;
+            cursor: pointer;
+        }
+        .center-circle-text {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            color: #aaa;
+            font-size: 1em;
+            text-align: center;
+            z-index: 4;
+            pointer-events: none;
+        }
+        .question-media {
+            display: block;
+            margin: 20px auto;
+            max-width: 90%;
+            max-height: 200px;
+        }
+        .hidden { display: none; }
+        .shake {
+            animation: shake 0.7s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* Botón de mute */
+        #mute-btn {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.5);
+            border: none;
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            z-index: 1000;
+            cursor: pointer;
+        }
+
+        /* Pantalla de inicio */
+        #start-screen {
+            text-align: center;
+            padding: 20px;
+        }
+        #start-btn {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .wheel-container {
+                width: 90vw;
+                height: 90vw;
+                max-width: 300px;
+                max-height: 300px;
+            }
+            .option-label {
+                font-size: 0.9em;
+                width: 100px;
+            }
+            h2 {
+                font-size: 1.3em;
+            }
+        }
+    </style>
+</head>
+<body>
+<div id="main">
+    <button id="mute-btn">🔊</button>
+    <h1 id="title"></h1>
+    <div id="content"></div>
+</div>
+<script>
+let config;
+let currentQuestion = 0;
+let gameOver = false;
+let questions = [];
+let audios = {};
+let maxAttempts = 1;
+let attempts = 0;
+let muted = false;
+
+function polarToCartesian(cx, cy, r, angle) {
+    let rad = (angle-90) * Math.PI / 180;
+    return {
+        x: cx + r * Math.cos(rad),
+        y: cy + r * Math.sin(rad)
+    };
+}
+
+function drawWheel(options, selectedIdx = null, errorIdx = null) {
+    const n = options.length;
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const size = 340, cx = 170, cy = 170, r1 = 80, r2 = 160;
+    let svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('class', 'wheel-svg');
+    svg.setAttribute('width', size);
+    svg.setAttribute('height', size);
+    for (let i = 0; i < n; i++) {
+        let startAngle = (360/n)*i;
+        let endAngle = (360/n)*(i+1);
+        let p1 = polarToCartesian(cx, cy, r1, startAngle);
+        let p2 = polarToCartesian(cx, cy, r2, startAngle);
+        let p3 = polarToCartesian(cx, cy, r2, endAngle);
+        let p4 = polarToCartesian(cx, cy, r1, endAngle);
+        let d = `M${p1.x},${p1.y} L${p2.x},${p2.y} A${r2},${r2} 0 0,1 ${p3.x},${p3.y} L${p4.x},${p4.y} A${r1},${r1} 0 0,0 ${p1.x},${p1.y} Z`;
+        let path = document.createElementNS(svgNS, 'path');
+        path.setAttribute('d', d);
+        if (selectedIdx === i) {
+            path.setAttribute('fill', '#1abc9c');
+            path.setAttribute('filter', 'drop-shadow(0 0 16px #1abc9c)');
+        } else if (errorIdx === i) {
+            path.setAttribute('fill', '#c0392b');
+            path.setAttribute('filter', 'drop-shadow(0 0 16px #c0392b)');
+        } else {
+            path.setAttribute('fill', '#333');
+            path.removeAttribute('filter');
+        }
+        path.setAttribute('stroke', '#fff');
+        path.setAttribute('stroke-width', '2');
+        svg.appendChild(path);
+    }
+    return svg;
+}
+
+function showStartScreen() {
+    const c = document.getElementById('content');
+    c.innerHTML = `
+        <div id="start-screen">
+            <h2>${config.title || 'Búsqueda del Tesoro'}</h2>
+            <p>Responde correctamente todas las preguntas para ganar</p>
+            <button id="start-btn">Comenzar</button>
+        </div>
+    `;
+    document.getElementById('start-btn').addEventListener('click', startGame);
+}
+
+function startGame() {
+    currentQuestion = 0;
+    attempts = 0;
+    gameOver = false;
+    showQuestion(0);
+}
+
+function showQuestion(idx) {
+    if (gameOver) return;
+    currentQuestion = idx;
+    const c = document.getElementById('content');
+    c.innerHTML = '';
+    // Mensaje intermedio
+    let showedIntermediate = false;
+    if (config && config.intermediates && Array.isArray(config.intermediates)) {
+        for (const interm of config.intermediates) {
+            if (interm && interm.insertAt === idx) {
+                let div = document.createElement('div');
+                div.style.textAlign = 'center';
+                div.style.margin = '40px 0';
+                div.style.cursor = 'pointer';
+                div.style.padding = '30px 10px';
+                div.style.background = 'rgba(0,0,0,0.7)';
+                div.style.borderRadius = '18px';
+                div.style.maxWidth = '90vw';
+                div.style.display = 'inline-block';
+                div.innerHTML = '';
+                if (interm.text) {
+                    div.innerHTML += `<h2 style='color:#6cf;margin-bottom:10px;'>${interm.text}</h2>`;
+                }
+                if (interm.media) {
+                    let ext = interm.media.split('.').pop();
+                    if (['mp4','webm','ogg'].includes(ext)) {
+                        let v = document.createElement('video');
+                        v.src = interm.media;
+                        v.controls = true;
+                        v.autoplay = true;
+                        v.loop = false;
+                        v.className = 'question-media';
+                        div.appendChild(v);
+                    } else if (['jpg','jpeg','png','gif','webp'].includes(ext)) {
+                        let img = document.createElement('img');
+                        img.src = interm.media;
+                        img.className = 'question-media';
+                        div.appendChild(img);
+                    } else if (['mp3','wav','ogg'].includes(ext)) {
+                        let a = document.createElement('audio');
+                        a.src = interm.media;
+                        a.controls = true;
+                        a.className = 'question-media';
+                        div.appendChild(a);
+                    }
+                }
+                let overlay = document.createElement('div');
+                overlay.style.position = 'fixed';
+                overlay.style.left = 0;
+                overlay.style.top = 0;
+                overlay.style.width = '100vw';
+                overlay.style.height = '100vh';
+                overlay.style.display = 'flex';
+                overlay.style.alignItems = 'center';
+                overlay.style.justifyContent = 'center';
+                overlay.style.background = 'rgba(0,0,0,0.25)';
+                overlay.style.zIndex = 1000;
+                overlay.appendChild(div);
+                document.body.appendChild(overlay);
+                function closeIntermediate() {
+                    overlay.remove();
+                    showQuestion(idx);
+                }
+                overlay.addEventListener('click', closeIntermediate);
+                div.addEventListener('click', function(e){ e.stopPropagation(); closeIntermediate(); });
+                showedIntermediate = true;
+                break;
+            }
+        }
+    }
+    if (showedIntermediate) {
+        return;
+    }
+    if (idx >= questions.length) {
+        showWinScreen();
+        if (audios.music) audios.music.pause();
+        return;
+    }
+    const q = questions[idx];
+    let h2 = document.createElement('h2');
+    h2.textContent = q.text;
+    c.appendChild(h2);
+    if (q.media) {
+        let ext = q.media.split('.').pop();
+        if (['mp4','webm','ogg'].includes(ext)) {
+            let v = document.createElement('video');
+            v.src = q.media;
+            v.controls = true;
+            v.className = 'question-media';
+            c.appendChild(v);
+        } else if (['mp3','wav','ogg'].includes(ext)) {
+            let a = document.createElement('audio');
+            a.src = q.media;
+            a.controls = true;
+            a.className = 'question-media';
+            c.appendChild(a);
+        }
+    }
+    // Rueda Mass Effect mejorada
+    let wheelContainer = document.createElement('div');
+    wheelContainer.className = 'wheel-container';
+    let svg = drawWheel(q.options);
+    wheelContainer.appendChild(svg);
+    // Etiquetas
+    const n = q.options.length;
+    let optionLabels = [];
+    for (let i = 0; i < n; i++) {
+        let angle = (360/n)*i + 180/n;
+        let pos = polarToCartesian(170, 170, 200, angle);
+        let label = document.createElement('div');
+        label.className = 'option-label';
+        label.style.left = `${pos.x}px`;
+        label.style.top = `${pos.y}px`;
+        label.textContent = q.options[i];
+        wheelContainer.appendChild(label);
+        optionLabels.push(label);
+    }
+    // Flecha
+    let arrow = document.createElement('img');
+    arrow.src = 'data:image/svg+xml;utf8,<svg width="40" height="40" xmlns="http://www.w3.org/2000/svg"><polygon points="20,5 35,35 20,28 5,35" fill="white"/></svg>';
+    arrow.className = 'arrow';
+    wheelContainer.appendChild(arrow);
+    // Círculo central
+    let center = document.createElement('div');
+    center.className = 'center-circle';
+    wheelContainer.appendChild(center);
+    let centerText = document.createElement('div');
+    centerText.className = 'center-circle-text';
+    centerText.textContent = 'Arrastra desde aquí';
+    wheelContainer.appendChild(centerText);
+
+    // Drag logic mejorado (touch y mouse) con eventos pointer
+    let dragging = false, startX, startY, lastActive = null;
+    function getAngle(x, y) {
+        let dx = x - startX;
+        let dy = y - startY;
+        let angle = Math.atan2(dy, dx) * 180 / Math.PI;
+        if (angle < 0) angle += 360;
+        return angle;
+    }
+    function getOptionIdx(angle) {
+        return Math.floor((angle + 360/n/2) % 360 / (360/n));
+    }
+    let currentSelectedIdx = null;
+    function highlightOption(idx) {
+        let svg2 = drawWheel(q.options, idx);
+        wheelContainer.replaceChild(svg2, svg);
+        svg = svg2;
+        currentSelectedIdx = idx;
+    }
+    function clearHighlight() {
+        let svg2 = drawWheel(q.options);
+        wheelContainer.replaceChild(svg2, svg);
+        svg = svg2;
+        currentSelectedIdx = null;
+    }
+    function handleStart(e) {
+        dragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        e.preventDefault();
+    }
+    function handleMove(e) {
+        if (!dragging) return;
+        let angle = getAngle(e.clientX, e.clientY);
+        arrow.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+        let dx = e.clientX - startX, dy = e.clientY - startY;
+        let dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist > 60) {
+            let idx = getOptionIdx(angle);
+            highlightOption(idx);
+            lastActive = idx;
+        } else {
+            clearHighlight();
+            lastActive = null;
+        }
+    }
+    function handleEnd(e) {
+        if (!dragging) return;
+        dragging = false;
+        let dx = e.clientX - startX, dy = e.clientY - startY;
+        let dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 60 || lastActive === null) { 
+            clearHighlight(); 
+            return; 
+        }
+        let idx = lastActive;
+        clearHighlight();
+        // Feedback visual
+        if (parseInt(q.correct) === idx) {
+            let svg2 = drawWheel(q.options, idx);
+            wheelContainer.replaceChild(svg2, svg);
+            svg = svg2;
+            playAudio('select');
+            setTimeout(() => {
+                playAudio('correct');
+                attempts = 0;
+                if (currentQuestion === questions.length - 1) {
+                    showWinScreen();
+                    gameOver = true;
+                } else {
+                    showFeedback('correct', currentQuestion);
+                }
+            }, 400);
+        } else {
+            let svg2 = drawWheel(q.options, null, idx);
+            wheelContainer.replaceChild(svg2, svg);
+            svg = svg2;
+            playAudio('wrong');
+            attempts = (typeof attempts === 'number' ? attempts : 0) + 1;
+            if (attempts >= maxAttempts) {
+                showLoseScreen();
+                gameOver = true;
+            } else {
+                showFeedback('wrong', currentQuestion);
+            }
+        }
+    }
+    // Eventos pointer (compatibles con touch y mouse)
+    center.addEventListener('pointerdown', handleStart);
+    document.addEventListener('pointermove', handleMove);
+    document.addEventListener('pointerup', handleEnd);
+    document.addEventListener('pointercancel', handleEnd);
+
+    c.appendChild(wheelContainer);
+}
+
+// Mostrar feedback multimedia y animaciones
+function showFeedback(type, idx) {
+    const c = document.getElementById('content');
+    let msg, media, audio, anim, emojis, color;
+    if (type === 'correct') {
+        msg = config.correctMessage || '¡Respuesta correcta!';
+        media = config.correctMedia;
+        audio = config.correctAudio;
+        anim = config.correctAnim;
+        emojis = config.correctEmojis;
+        color = '#1abc9c';
+    } else {
+        msg = config.wrongMessage || 'Respuesta incorrecta. ¡Intenta de nuevo!';
+        media = config.wrongMedia;
+        audio = config.wrongAudio;
+        anim = config.wrongAnim;
+        emojis = config.wrongEmojis;
+        color = '#c0392b';
+    }
+    let div = document.createElement('div');
+    div.style.textAlign = 'center';
+    div.style.margin = '20px 0';
+    div.innerHTML = `<h3 style=\"color:${color}\">${msg}</h3>`;
+    c.appendChild(div);
+    if (media) {
+        let ext = media.split('.').pop();
+        if (['mp4','webm','ogg'].includes(ext)) {
+            let v = document.createElement('video');
+            v.src = media;
+            v.autoplay = true;
+            v.loop = false;
+            v.controls = true;
+            v.className = 'question-media';
+            c.appendChild(v);
+        } else if (['jpg','jpeg','png','gif','webp'].includes(ext)) {
+            let img = document.createElement('img');
+            img.src = media;
+            img.className = 'question-media';
+            c.appendChild(img);
+        }
+    }
+    if (audio) {
+        let a = createAudio(audio);
+        a.play();
+    }
+    if (anim && anim !== 'none') {
+        setTimeout(()=>triggerAnimation(anim, emojis), 50);
+    }
+    setTimeout(() => {
+        if (type === 'correct') {
+            showQuestion(idx+1);
+        } else {
+            showQuestion(idx);
+        }
+    }, 1200);
+}
+
+// Pantalla de derrota personalizada
+function showLoseScreen() {
+    const c = document.getElementById('content');
+    c.innerHTML = '';
+    let msg = config.loseMessage || '¡Has perdido! Intenta de nuevo más tarde.';
+    let div = document.createElement('div');
+    div.style.textAlign = 'center';
+    div.style.margin = '20px 0';
+    div.innerHTML = `<h2 style="color:#e74c3c">${msg}</h2>
+                    <button onclick="location.reload()" style="padding:10px 20px;background:#e74c3c;color:white;border:none;border-radius:5px;cursor:pointer;">Reintentar</button>`;
+    c.appendChild(div);
+    
+    if (config.wrongMedia) {
+        let ext = config.wrongMedia.split('.').pop();
+        if (['mp4','webm','ogg'].includes(ext)) {
+            let v = document.createElement('video');
+            v.src = config.wrongMedia;
+            v.autoplay = true;
+            v.loop = true;
+            v.controls = true;
+            v.className = 'question-media';
+            c.appendChild(v);
+        } else if (['jpg','jpeg','png','gif','webp'].includes(ext)) {
+            let img = document.createElement('img');
+            img.src = config.wrongMedia;
+            img.className = 'question-media';
+            c.appendChild(img);
+        }
+    }
+    if (config.wrongAudio) {
+        let a = createAudio(config.wrongAudio);
+        a.play();
+    }
+    if (config.wrongAnim && config.wrongAnim !== 'none') {
+        triggerAnimation(config.wrongAnim, config.wrongEmojis);
+    }
+}
+
+// Pantalla de victoria personalizada
+function showWinScreen() {
+    const c = document.getElementById('content');
+    c.innerHTML = '';
+    let msg = config.winMessage || '¡Felicidades! Has terminado la búsqueda 🎉';
+    let div = document.createElement('div');
+    div.style.textAlign = 'center';
+    div.style.margin = '20px 0';
+    div.innerHTML = `<h2 style="color:#ffd700">${msg}</h2>`;
+    c.appendChild(div);
+    if (config.winMedia) {
+        let ext = config.winMedia.split('.').pop();
+        if (['mp4','webm','ogg'].includes(ext)) {
+            let v = document.createElement('video');
+            v.src = config.winMedia;
+            v.autoplay = true;
+            v.loop = true;
+            v.controls = true;
+            v.className = 'question-media';
+            c.appendChild(v);
+        } else if (['jpg','jpeg','png','gif','webp'].includes(ext)) {
+            let img = document.createElement('img');
+            img.src = config.winMedia;
+            img.className = 'question-media';
+            c.appendChild(img);
+        }
+    }
+    if (config.winAudio) {
+        let a = createAudio(config.winAudio);
+        a.play();
+    }
+    if (config.winAnim && config.winAnim !== 'none') {
+        triggerAnimation(config.winAnim, config.winEmojis);
+    }
+}
+
+// Animaciones y partículas/emojis
+function triggerAnimation(anim, emojis) {
+    if (anim === 'confetti') {
+        confettiEffect();
+    } else if (anim === 'emojis' || anim === 'custom') {
+        emojiEffect(emojis);
+    } else if (anim === 'explosion') {
+        explosionEffect();
+    } else if (anim === 'shake') {
+        document.body.classList.add('shake');
+        setTimeout(()=>document.body.classList.remove('shake'), 700);
+    }
+}
+
+// Efecto confetti simple
+function confettiEffect() {
+    for (let i=0; i<40; i++) {
+        let conf = document.createElement('div');
+        conf.textContent = '🎉';
+        conf.style.position = 'fixed';
+        conf.style.left = Math.random()*100+'vw';
+        conf.style.top = '-40px';
+        conf.style.fontSize = (24+Math.random()*16)+'px';
+        conf.style.opacity = 0.8;
+        conf.style.transition = 'top 1.2s cubic-bezier(.4,2,.6,1), opacity 1.2s';
+        document.body.appendChild(conf);
+        setTimeout(()=>{
+            conf.style.top = (60+Math.random()*30)+'vh';
+            conf.style.opacity = 0;
+        }, 10);
+        setTimeout(()=>conf.remove(), 1300);
+    }
+}
+// Efecto emojis personalizados
+function emojiEffect(emojis) {
+    let arr = [];
+    if (typeof emojis === 'string') {
+        arr = emojis.split(',').map(e=>e.trim()).filter(Boolean);
+    }
+    if (!arr || arr.length === 0) {
+        // Mostrar puntos brillantes si no hay emojis
+        for (let i=0; i<24; i++) {
+            let dot = document.createElement('div');
+            dot.textContent = '';
+            dot.style.position = 'fixed';
+            dot.style.left = Math.random()*100+'vw';
+            dot.style.top = '-40px';
+            dot.style.width = dot.style.height = (16+Math.random()*12)+'px';
+            dot.style.borderRadius = '50%';
+            let color = (window.config && window.config.particleColor) ? window.config.particleColor : '#fffbe6';
+            dot.style.background = color;
+            dot.style.boxShadow = `0 0 16px 4px ${color}`;
+            dot.style.opacity = 0.85;
+            dot.style.transition = 'top 1.2s cubic-bezier(.4,2,.6,1), opacity 1.2s';
+            document.body.appendChild(dot);
+            setTimeout(()=>{
+                dot.style.top = (60+Math.random()*30)+'vh';
+                dot.style.opacity = 0;
+            }, 10);
+            setTimeout(()=>dot.remove(), 1300);
+        }
+    } else {
+        for (let i=0; i<24; i++) {
+            let em = document.createElement('div');
+            em.textContent = arr[Math.floor(Math.random()*arr.length)];
+            em.style.position = 'fixed';
+            em.style.left = Math.random()*100+'vw';
+            em.style.top = '-40px';
+            em.style.fontSize = (28+Math.random()*18)+'px';
+            em.style.opacity = 0.9;
+            em.style.transition = 'top 1.2s cubic-bezier(.4,2,.6,1), opacity 1.2s';
+            document.body.appendChild(em);
+            setTimeout(()=>{
+                em.style.top = (60+Math.random()*30)+'vh';
+                em.style.opacity = 0;
+            }, 10);
+            setTimeout(()=>em.remove(), 1300);
+        }
+    }
+}
+// Efecto explosión
+function explosionEffect() {
+    for (let i=0; i<30; i++) {
+        let part = document.createElement('div');
+        part.textContent = '💥';
+        part.style.position = 'fixed';
+        part.style.left = '50vw';
+        part.style.top = '50vh';
+        part.style.fontSize = (20+Math.random()*20)+'px';
+        part.style.opacity = 0.9;
+        part.style.transform = `translate(-50%,-50%) rotate(${Math.random()*360}deg)`;
+        part.style.transition = 'left 0.8s, top 0.8s, opacity 0.8s';
+        document.body.appendChild(part);
+        setTimeout(()=>{
+            part.style.left = (40+Math.random()*20)+'vw';
+            part.style.top = (30+Math.random()*40)+'vh';
+            part.style.opacity = 0;
+        }, 10);
+        setTimeout(()=>part.remove(), 900);
+    }
+}
+
+function createAudio(src) {
+    const audio = new Audio(src);
+    audio.preload = 'auto';
+    audio.volume = 0.7;
+    return audio;
+}
+
+function playAudio(key) {
+    if (audios[key] && !muted) {
+        audios[key].currentTime = 0;
+        audios[key].play();
+    }
+}
+
+async function loadConfig() {
+    const url = window.location.pathname;
+    const parts = url.split('/');
+    const gameId = parts[2];
+    const res = await fetch(`/api/game/${gameId}/config`);
+    config = await res.json();
+    // Título dinámico
+    if (config.title) {
+        document.getElementById('title').textContent = config.title;
+        document.title = config.title;
+    } else {
+        document.getElementById('title').textContent = 'Búsqueda del Tesoro';
+        document.title = 'Búsqueda del Tesoro';
+    }
+    // Colores y fondo
+    document.body.style.background = config.bgType === 'color' ? config.bgColor : '#111';
+    document.body.style.color = config.textColor || '#fff';
+    if (config.bgType === 'image' && config.bgFile) {
+        document.body.style.background = `url('${config.bgFile}') center/cover no-repeat`;
+    } else if (config.bgType === 'video' && config.bgFile) {
+        let v = document.createElement('video');
+        v.src = config.bgFile;
+        v.autoplay = true;
+        v.loop = true;
+        v.muted = true;
+        v.style.position = 'fixed';
+        v.style.top = 0;
+        v.style.left = 0;
+        v.style.width = '100vw';
+        v.style.height = '100vh';
+        v.style.objectFit = 'cover';
+        v.style.zIndex = '-1';
+        document.body.appendChild(v);
+    }
+    // Audios
+    if (config.music) {
+        audios.music = createAudio(config.music);
+        audios.music.loop = true;
+        audios.music.volume = 0.5;
+        audios.music.play();
+    }
+    if (config.soundSelect) audios.select = createAudio(config.soundSelect);
+    if (config.soundCorrect) audios.correct = createAudio(config.soundCorrect);
+    if (config.soundWrong) audios.wrong = createAudio(config.soundWrong);
+    // Preguntas
+    questions = config.questions.map((q) => ({
+        text: q.text,
+        options: q.options,
+        correct: q.correct,
+        media: q.media
+    }));
+    // Intermedios
+    config.intermediates = config.intermediates.map((i) => ({
+        text: i.text,
+        insertAt: parseInt(i.insertAt) || 0,
+        media: i.media
+    }));
+    // Intentos máximos configurables
+    maxAttempts = parseInt(config.maxAttempts) || 1;
+    attempts = 0;
+    gameOver = false;
+    currentQuestion = 0;
+
+    // Botón de mute
+    document.getElementById('mute-btn').addEventListener('click', function() {
+        muted = !muted;
+        this.textContent = muted ? '🔇' : '🔊';
+        if (audios.music) {
+            audios.music.muted = muted;
+        }
+    });
+
+    showStartScreen();
+}
+
+window.onload = loadConfig;
+</script>
+</body>
+</html>

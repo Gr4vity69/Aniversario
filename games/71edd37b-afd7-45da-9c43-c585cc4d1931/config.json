@@ -1,0 +1,70 @@
+{
+  "title": "uyy",
+  "bgColor": "#131028",
+  "bgType": "color",
+  "textColor": "#ffd500",
+  "btnColor": "#ee44e0",
+  "music": null,
+  "soundSelect": null,
+  "soundCorrect": null,
+  "soundWrong": null,
+  "bgFile": null,
+  "questions": [
+    {
+      "text": "adfa",
+      "options": [
+        "vx",
+        "sgasg",
+        "asdfgafga",
+        "aag",
+        "gasdg",
+        "aasdg"
+      ],
+      "correct": "0",
+      "media": null
+    },
+    {
+      "text": "fa",
+      "options": [
+        "agrga",
+        "asdfas"
+      ],
+      "correct": "0",
+      "media": null
+    },
+    {
+      "text": "f",
+      "options": [
+        "a",
+        "f",
+        "c",
+        "b"
+      ],
+      "correct": "0",
+      "media": null
+    }
+  ],
+  "intermediates": [],
+  "maxAttempts": "3",
+  "particleColor": "#ff0000",
+  "correctMessage": "¡Correcto!",
+  "correctMedia": null,
+  "correctAudio": null,
+  "correctAnim": "confetti",
+  "correctEmojis": "🎉,🌟,💫",
+  "wrongMessage": "¡Incorrecto! Intenta de nuevo",
+  "wrongMedia": null,
+  "wrongAudio": null,
+  "wrongAnim": "shake",
+  "wrongEmojis": "❌",
+  "winMessage": "¡Felicidades! Has ganado",
+  "winMedia": null,
+  "winAudio": null,
+  "winAnim": "confetti",
+  "winEmojis": "vamoooo",
+  "loseMessage": "¡Has perdido! Intenta de nuevo",
+  "loseMedia": null,
+  "loseAudio": null,
+  "loseAnim": "explosion",
+  "loseEmojis": "☠️"
+}

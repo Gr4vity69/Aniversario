@@ -1,0 +1,46 @@
+{
+  "bgColor": "#000000",
+  "bgType": "color",
+  "textColor": "#ffffff",
+  "btnColor": "#007bff",
+  "music": null,
+  "soundSelect": null,
+  "soundCorrect": null,
+  "soundWrong": null,
+  "bgFile": null,
+  "questions": [
+    {
+      "text": "fa",
+      "options": [
+        "agrga",
+        "sgasg",
+        "asdfgafga",
+        "aag",
+        "gasdg",
+        "aasdg"
+      ],
+      "correct": "0",
+      "mediaIndex": null
+    },
+    {
+      "text": "r",
+      "options": [
+        "a",
+        "add",
+        "g",
+        "sgassa"
+      ],
+      "correct": "0",
+      "mediaIndex": null
+    }
+  ],
+  "intermediates": [
+    {
+      "text": "afa",
+      "insertAt": 0,
+      "mediaIndex": null
+    }
+  ],
+  "mediaQuestions": [],
+  "intermediateMedias": []
+}

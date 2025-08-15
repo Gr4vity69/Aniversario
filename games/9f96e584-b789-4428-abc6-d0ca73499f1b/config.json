@@ -1,0 +1,138 @@
+{
+  "title": "En busqueda del amor",
+  "bgColor": "#1a2a6c",
+  "bgType": "image",
+  "textColor": "#ffffff",
+  "btnColor": "#ee44b8",
+  "music": "1754624482047-128477669.mp3",
+  "soundSelect": "1754624484280-165826509.ogg",
+  "soundCorrect": "1754624484281-281180299.ogg",
+  "soundWrong": "1754624484285-47280715.ogg",
+  "bgFile": "1754624479547-710358753.gif",
+  "questions": [
+    {
+      "text": "¿Cual fue el lugar de nuestro primer beso?",
+      "options": [
+        "detras de la torre de agua",
+        "en tu casa",
+        "bajo el arbol",
+        "en el cumple de la Mayra",
+        "detras del comedor",
+        "ninguna de las anteriores"
+      ],
+      "correct": "5",
+  "media": "1754624484286-838644578.mp3"
+    },
+    {
+      "text": "¿De que forma te ayudaba a calmarte?",
+      "options": [
+        "cantando una cancion de cuna",
+        "acariciando tu cabeza",
+        "te dejaba dormir en mi regazo",
+        "cantaba fly me to the moon"
+      ],
+      "correct": "0",
+  "media": "1754624485444-635955390.mp4"
+    },
+    {
+      "text": "NOTHING BEATS A",
+      "options": [
+        "JET TO DO HOLLYDAY",
+        "¿no eran preguntas?",
+        "JET TWO HOLIDAY"
+      ],
+      "correct": "2",
+  "media": "1754624485500-971126384.mp3"
+    },
+    {
+      "text": "¿Cual es mi comida favorita?",
+      "options": [
+        "pizza de salame jamon y queso",
+        "lomito",
+        "hamburguesa de balck pan",
+        "fideos al pesto"
+      ],
+      "correct": "1",
+  "media": "1754624486597-132737933.mp4"
+    },
+    {
+      "text": "¿Con que cancion tengo editado un video juntos?",
+      "options": [
+        "You spin me round",
+        "I was made for lovin you",
+        "Storm",
+        "I want you"
+      ],
+      "correct": "0",
+      "media": null
+    },
+    {
+      "text": "¿Cuál es el hueso más pequeño del cuerpo humano?",
+      "options": [
+        "El yunque",
+        "El estribo",
+        "El martillo",
+        "La rótula",
+        "El esternocleidomastoideo"
+      ],
+      "correct": "0",
+      "media": null
+    },
+    {
+      "text": "¿Quien es el emperador en la pelicula Gladiador?",
+      "options": [
+        "Julio Cesar ",
+        "Neron",
+        "Marco Aurelio",
+        "Caligula"
+      ],
+      "correct": "0",
+      "media": null
+    },
+    {
+      "text": "¿Qué pintor se cortó parte de su propia oreja?",
+      "options": [
+        "Pablo Picasso",
+        "Salvador Dalí",
+        "Vincent van Gogh",
+        "Claude Monet"
+      ],
+      "correct": "0",
+      "media": null
+    },
+    {
+      "text": "¿Me amas?",
+      "options": [
+        "Si",
+        "SIIIII",
+        "Obvi",
+        "No"
+      ],
+      "correct": "0",
+      "media": null
+    }
+  ],
+  "intermediates": [],
+  "maxAttempts": "3",
+  "particleColor": "#ffd700",
+  "correctMessage": "Vas por buen camino",
+  "correctMedia": "1754624479810-916511154.gif",
+  "correctAudio": null,
+  "correctAnim": "confetti",
+  "correctEmojis": "🎉,🌟,💫",
+  "wrongMessage": "Esta maaal",
+  "wrongMedia": "1754624479810-320217378.gif",
+  "wrongAudio": null,
+  "wrongAnim": "shake",
+  "wrongEmojis": "💥,😢,❌",
+  "winMessage": "¡ESOOOO! Reclama tu premio linda",
+  "winMedia": "1754624479810-298210974.gif",
+  "winAudio": "1754624479810-292481821.ogg",
+  "winAnim": "confetti",
+  "winEmojis": "🏆,🎊,🥳",
+  "loseMessage": "Me parece que no se va a poder",
+  "loseMedia": "1754624480209-445356662.gif",
+  "loseAudio": "1754624480210-624474842.wav",
+  "loseAnim": "shake",
+  "loseEmojis": "💔,😢,☠️"
+}
